@@ -13,9 +13,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import Add from "@mui/icons-material/AddCircleOutline"
 import { Link } from "react-router-dom";
 import base64 from "base-64"
 import Cookies from "js-cookie";
+import { getCookieData } from "../App";
 
 // Componente per la Foto Profilo
 const ProfilePic = ({ size = 32 }) => {
@@ -59,8 +61,10 @@ const Navbar = () => {
     window.location.reload();
   };
 
+  const sessionCookie = Cookies.get("SSDT")
+  const myId = getCookieData(sessionCookie)?.id
   return (
-    <AppBar position="static" color="primary" sx={{ width: "100%", position: "fixed", top: 0, left: 0 }}>
+    <AppBar position="static" color="primary" sx={{ color:"rgb(255, 255, 255)",background:"rgb(108, 145, 212)",width: "100%", position: "fixed", top: 0, left: 0 ,zIndex:1000}}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         {/* Logo */}
         <Typography variant="h6" component={Link} to="/" sx={{ textDecoration: "none", color: "white" }}>
@@ -81,10 +85,15 @@ const Navbar = () => {
             </Button>
             {isLogged ? (
               <>
+                <Button color="inherit" component={Link} to="/aggiungi-prodotto">
+                  <Add sx={{mr:1,scale:0.8}}/>  Prodotto
+                </Button>
                 <Button color="inherit" onClick={handleLogout}>
                   Logout
                 </Button>
-                <ProfilePic size={40} /> {/* Foto profilo */}
+                <Button component={Link} to={`/profile/${myId}`}>
+                  <ProfilePic size={40} /> 
+                </Button>
               </>
             ) : (
               <>
@@ -118,8 +127,10 @@ const Navbar = () => {
               {isLogged ? (
                 <Box>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                  <MenuItem>
-                    <ProfilePic size={32} /> {/* Foto profilo */}
+                  <MenuItem component={Link} >
+                    <Button component={Link} to={`/profile/${myId}`} color="blue">
+                      <ProfilePic size={28} /> Profile
+                    </Button>
                   </MenuItem>
                 </Box>
               ) : (

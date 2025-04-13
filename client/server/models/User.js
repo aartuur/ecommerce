@@ -1,17 +1,17 @@
 import { EntitySchema } from "typeorm";
 
 const User = new EntitySchema({
-  name: "User", 
-  tableName: "users", 
+  name: "User",
+  tableName: "users",
   columns: {
     id: {
-      type: "uuid", 
+      type: "uuid",
       primary: true,
-      generated: "uuid", 
+      generated: "uuid",
     },
     username: {
-      type: "varchar", 
-      unique: true, 
+      type: "varchar",
+      unique: true,
     },
     email: {
       type: "varchar",
@@ -26,11 +26,21 @@ const User = new EntitySchema({
     },
     updatedAt: {
       type: "timestamp",
-      updateDate: true, 
+      updateDate: true,
+    },
+  },
+  relations: {
+    prodotti: {
+      target: "Prodotto",
+      type: "one-to-many",
+      inverseSide: "pubblicatoDa",
+    },
+    preferiti: {
+      target: "Preferito",
+      type: "one-to-many",
+      inverseSide: "user",
     },
   },
 });
 
-// Dovrai aggiungere le references a Offerta (Prodotto) e gli altri a cui userId è FK
-
-export default User
+export default User;

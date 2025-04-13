@@ -6,6 +6,12 @@ import User from "./models/User.js";
 import cors from "cors"
 import prodRouter from "./routers/prod.js";
 import Prodotto from "./models/Prodotto.js";
+import Image from "./models/Image.js";
+import Preferito from "./models/Preferito.js";
+import userRouter from "./routers/user.js";
+import Follower from "./models/Follower.js";
+import commentRouter from "./routers/comment.js";
+import Commento from "./models/Commento.js";
 
 /* ======== DOTENV CONF ========= */
 dotenv.configDotenv()
@@ -20,6 +26,8 @@ app.use(cors({
 /* ========= ROUTERS =========== */
 app.use("/auth",authRouter)
 app.use("/product",prodRouter)
+app.use("/user",userRouter)
+app.use("/comment",commentRouter)
 
 createConnection({
   type: "mysql",
@@ -30,7 +38,7 @@ createConnection({
   database: "ecommerce",
   synchronize: true,
   logging: false,
-  entities: [User,Prodotto],
+  entities: [User,Prodotto,Image,Preferito,Follower,Commento],
 }).then(() => console.log("Connessione al database stabilita."))
     .catch((error) => console.log("Errore durante la connessione al database:", error));
 

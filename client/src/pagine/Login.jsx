@@ -60,8 +60,8 @@ const Login = () => {
       const response = await axios.post("http://localhost:14577/auth/login", formData);
 
       if (response.status === 200) {
-        const cookieData = base64.encode(JSON.stringify(response.data.data));
-        Cookies.set("SSDT", cookieData, { expires: 7 }); // Salva il cookie
+        const cookieData = base64.encode(JSON.stringify({...response?.data?.data,avatar:response?.data?.data?.username?.slice(0,2)}))        
+        Cookies.set("SSDT",cookieData)     // seSSion DaTa
 
         // Reindirizza alla home
         setSuccess(true);

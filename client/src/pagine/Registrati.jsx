@@ -26,7 +26,7 @@ const Registrati = () => {
         setSuccess(true);
         setFormData({ username: "", email: "", password: "" });
         
-        const cookieData = base64.encode(JSON.stringify(response.data.data))
+        const cookieData = base64.encode(JSON.stringify({...response?.data?.data,avatar:response?.data?.data?.username?.slice(0,2)}))        
         cookies.set("SSDT",cookieData)     // seSSion DaTa
         navigate("/")
       }

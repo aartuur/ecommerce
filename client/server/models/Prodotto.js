@@ -1,4 +1,4 @@
-import { EntitySchema }  from "typeorm";
+import { EntitySchema } from "typeorm";
 
 const Prodotto = new EntitySchema({
   name: "Prodotto",
@@ -6,8 +6,8 @@ const Prodotto = new EntitySchema({
   columns: {
     id: {
       primary: true,
-      type: "int",
-      generated: true,
+      type: "uuid",
+      generated: "uuid",
     },
     Nome: {
       type: "varchar",
@@ -24,19 +24,42 @@ const Prodotto = new EntitySchema({
       scale: 2,
       nullable: false,
     },
-    image: {
-      type: "text", // Campo per memorizzare l'immagine codificata in Base64
-      nullable: true,
-    },
     nPreferiti: {
       type: "int",
       default: 0,
     },
-    pubblicatoDa: {
-      type: "int", // ID dell'utente che ha pubblicato il prodotto
+    pubblicatoDaId: {
+      type: "uuid",
       nullable: false,
+    },
+    imageId: {
+      type: "int", 
+      nullable: true,
+    },
+  },
+  relations: {
+    pubblicatoDa: {
+      target: "User",
+      type: "many-to-one",
+      joinColumn: {
+        name: "pubblicatoDaId",
+      },
+    },
+    image: {
+      target: "Image",
+      type: "one-to-one",
+      joinColumn: {
+        name: "imageId",
+      },
+      inverseSide: "prodotto",
+      onDelete: "SET NULL", 
+    },
+    preferiti: {
+      target: "Preferito",
+      type: "one-to-many",
+      inverseSide: "prodotto",
     },
   },
 });
 
-export default Prodotto
+export default Prodotto;

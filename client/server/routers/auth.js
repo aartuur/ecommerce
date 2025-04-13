@@ -36,7 +36,7 @@ authRouter.post("/registrati", async (req, res) => {
     return res.status(201).json({
         message: "Utente registrato con successo!",
         data:{
-            username,timestamps:new Date().toISOString()
+            username,timestamps:new Date().toISOString(),id:newUser.id
         }
     });
   } catch (error) {
@@ -72,6 +72,7 @@ authRouter.post("/login", (req, res) => {
             data: {
               username: user.username,
               timestamps: new Date().toISOString(),
+              id:user.id
             },
           });
         } else {

@@ -1,0 +1,7 @@
+#00ffde
+#00cfb4
+#00796b
+#3f3f3f
+#9d9e9b
+
+primary: rgb(108, 145, 212)
