@@ -18,6 +18,8 @@ chatRouter.get("/messages/:roomId", async (req, res) => {
       order: { dataInvio: "ASC" },
     });
 
+    console.log("BOMBOCLAT")
+
     res.json({ messaggi });
   } catch (error) {
     console.error("Errore nel recupero dei messaggi:", error);
