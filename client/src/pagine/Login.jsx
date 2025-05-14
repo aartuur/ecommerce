@@ -9,6 +9,7 @@ import {
   IconButton,
   InputAdornment,
   CircularProgress,
+  Link,
 } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -17,13 +18,17 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import base64 from "base-64";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import GoogleIcon from "@mui/icons-material/Google";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
-// Crea un tema scuro personalizzato
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#90caf9", // Blu chiaro per i pulsanti
+      main: "#6200ea", // Viola acceso per i pulsanti
+    },
+    secondary: {
+      main: "#03dac6", // Verde chiaro per gli accenti
     },
     background: {
       default: "#121212", // Sfondo scuro
@@ -35,6 +40,21 @@ const darkTheme = createTheme({
   },
   typography: {
     fontFamily: "'Poppins', sans-serif",
+    h4: {
+      fontWeight: 700,
+      letterSpacing: "1px",
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          fontWeight: 600,
+          letterSpacing: "1px",
+        },
+      },
+    },
   },
 });
 
@@ -42,8 +62,8 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Mostra/Nascondi password
-  const [loading, setLoading] = useState(false); // Stato di caricamento
+  const [showPassword, setShowPassword] = useState(false); 
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -54,27 +74,50 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setSuccess(false);
-    setLoading(true); // Attiva lo stato di caricamento
+    setLoading(true);
 
     try {
       const response = await axios.post("http://localhost:14577/auth/login", formData);
 
       if (response.status === 200) {
-        const cookieData = base64.encode(JSON.stringify({...response?.data?.data,avatar:response?.data?.data?.username?.slice(0,2)}))        
-        Cookies.set("SSDT",cookieData)     // seSSion DaTa
-
-        // Reindirizza alla home
+        const cookieData = base64.encode(
+          JSON.stringify({ ...response?.data?.data, avatar: response?.data?.data?.username?.slice(0, 2) })
+        );
+        Cookies.set("SSDT", cookieData);
         setSuccess(true);
         setTimeout(() => {
           navigate("/");
-        }, 500); // Ritardo per mostrare il messaggio di successo
+        }, 1000); 
       }
     } catch (err) {
       console.error("Errore durante il login:", err);
       setError(err.response?.data?.error || "Credenziali non valide.");
     } finally {
-      setLoading(false); // Disattiva lo stato di caricamento
+      setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const res = await axios.post("http://localhost:14577/oauth/callback", {
+        tokenId: credentialResponse.credential, 
+      });
+
+      if (res.data.success) {
+        const cookieData = base64.encode(JSON.stringify({...res.data.user,}));
+        Cookies.set("SSDT", cookieData); 
+        navigate("/");
+      } else {
+        setError("Errore durante l'autenticazione con Google.");
+      }
+    } catch (err) {
+      console.error("Errore durante il login con Google:", err);
+      setError("Errore interno del server.");
+    }
+  };
+
+  const handleGoogleFailure = () => {
+    setError("Errore durante l'autenticazione con Google.");
   };
 
   return (
@@ -82,22 +125,22 @@ const Login = () => {
       <Container maxWidth="sm">
         <Box
           sx={{
-            mt: 8,
+            mt: 10,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            p: 4,
-            borderRadius: 2,
+            p: 6,
+            borderRadius: 4,
             bgcolor: "background.paper",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+            boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.5)",
           }}
         >
           <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold", color: "primary.main" }}>
-            Accedi
+            Accedi al tuo account
           </Typography>
           {error && <Alert severity="error">{error}</Alert>}
           {success && <Alert severity="success">Login avvenuto con successo!</Alert>}
-          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%", mt: 2 }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%", mt: 3 }}>
             <TextField
               margin="normal"
               required
@@ -109,7 +152,10 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               InputProps={{
-                style: { borderRadius: "10px", backgroundColor: "#2e2e2e" },
+                style: { borderRadius: "12px", backgroundColor: "#2e2e2e" },
+              }}
+              InputLabelProps={{
+                style: { color: "#b0bec5" },
               }}
             />
             <TextField
@@ -123,18 +169,21 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               InputProps={{
-                style: { borderRadius: "10px", backgroundColor: "#2e2e2e" },
+                style: { borderRadius: "12px", backgroundColor: "#2e2e2e" },
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
                       onClick={() => setShowPassword(!showPassword)}
                       edge="end"
-                      sx={{ color: "primary.main" }}
+                      sx={{ color: "secondary.main" }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 ),
+              }}
+              InputLabelProps={{
+                style: { color: "#b0bec5" },
               }}
             />
             <Button
@@ -146,15 +195,34 @@ const Login = () => {
                 mt: 3,
                 mb: 2,
                 py: 1.5,
-                borderRadius: "20px",
+                borderRadius: "25px",
                 bgcolor: "primary.main",
                 "&:hover": {
-                  bgcolor: "#4fc3f7", // Cambia colore al passaggio del mouse
+                  bgcolor: "#3700b3",
                 },
               }}
             >
               {loading ? <CircularProgress size={24} color="inherit" /> : "Accedi"}
             </Button>
+            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+              <Link href="#" variant="body2" color="secondary.main" sx={{ textDecoration: "none" }}>
+                Recupera password
+              </Link>
+              <Link href="/registrati" variant="body2" color="secondary.main" sx={{ textDecoration: "none" }}>
+                Non hai un account? Registrati
+              </Link>
+            </Box>
+            <GoogleOAuthProvider clientId="714603803383-29nq8c0fl34kvo93m63j33um0m6vq5h0.apps.googleusercontent.com">
+              <Container maxWidth="sm">
+                <Box sx={{ mt: 10 }}>
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={handleGoogleFailure}
+                    useOneTap
+                  />
+                </Box>
+              </Container>
+            </GoogleOAuthProvider>
           </Box>
         </Box>
       </Container>

@@ -7,14 +7,47 @@ import Image from "../models/Image.js";
 import User from "../models/User.js";
 import Preferito from "../models/Preferito.js";
 
+
+// http://localhost:14577/product/*
 const prodRouter = Router();
 
+// Per le immagini nel db
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+prodRouter.get("/get-prods", async (req, res) => {
+  try {
+    const prodRepo = getRepository(Prodotto);
+    const prods = await prodRepo.find({
+      relations: ["image", "pubblicatoDa"], // Assicurati che 'pubblicatoDa' sia una relazione definita nel modello
+    });
+
+    const userRepo = getRepository(User);
+
+    const prodsConUtenti = await Promise.all(
+      prods.map(async (prodotto) => {
+        if (prodotto.pubblicatoDaId) {
+          const utente = await userRepo.findOneBy({ id: prodotto.pubblicatoDaId });
+          const { password, ...utenteSenzaPassword } = utente; // Escludi la password
+          return {
+            ...prodotto,
+            pubblicatoDa: utenteSenzaPassword,
+          };
+        }
+        return prodotto;
+      })
+    );
+
+    res.json(prodsConUtenti);
+  } catch (error) {
+    console.error("Errore nel recupero dei prodotti:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+});
 prodRouter.post("/add-prod", upload.single("image"), async (req, res) => {
   try {
     const { Nome, Descrizione, Prezzo, pubblicatoDa } = req.body;
+    const picture = req.body.picture && req.body.picture 
 
     if (!Nome || !Descrizione || !Prezzo || !pubblicatoDa || !req.file) {
       return res.status(400).json({ error: "Tutti i campi sono obbligatori, inclusa l'immagine" });
@@ -47,6 +80,7 @@ prodRouter.post("/add-prod", upload.single("image"), async (req, res) => {
       nPreferiti: 0,
       pubblicatoDa,
       pubblicatoDaId: creator.id,
+      picture,
       imageId: savedImage.id,
     });
     await prodottoRepository.save(nuovoProdotto);
@@ -75,10 +109,6 @@ prodRouter.get("/get-prods-by-user", async (req, res) => {
       relations: ["image"],
     });
 
-    if (!prodottiPubblicati || prodottiPubblicati.length === 0) {
-      return res.status(404).json({ msg: "Nessun prodotto pubblicato trovato per questo utente." });
-    }
-
     const userRepo = getRepository(User)
 
     const prodottiConUsername = await Promise.all(
@@ -86,15 +116,8 @@ prodRouter.get("/get-prods-by-user", async (req, res) => {
         const utente = await userRepo.findOneBy({ id: prodotto.pubblicatoDaId });
 
         return {
-          id: prodotto.id,
-          Nome: prodotto.Nome,
-          Descrizione: prodotto.Descrizione,
-          Prezzo: prodotto.Prezzo,
-          nPreferiti: prodotto.nPreferiti,
-          Commenti: prodotto.Commenti,
-          imageId: prodotto.image?.id,
-          pubblicatoDaId: prodotto.pubblicatoDaId,
-          pubblicatoDa: utente?.username || "Guest",
+          ...prodotto,
+          pubblicatoDa: utente,
         };
       })
     );
@@ -129,6 +152,7 @@ prodRouter.get("/get-prods/:limite", async (req, res) => {
     const prodottiConUsername = await Promise.all(
       prodotti.map(async (prodotto) => {
         const utente = await userRepo.findOneBy({ id: prodotto.pubblicatoDaId });
+        const {password,...resto} = utente
 
         return {
           id: prodotto.id,
@@ -138,8 +162,7 @@ prodRouter.get("/get-prods/:limite", async (req, res) => {
           nPreferiti: prodotto.nPreferiti,
           Commenti: prodotto.Commenti,
           imageId: prodotto.image?.id,
-          pubblicatoDaId: prodotto.pubblicatoDaId,
-          pubblicatoDa: utente?.username || "Guest",
+          pubblicatoDa: resto
         };
       })
     );

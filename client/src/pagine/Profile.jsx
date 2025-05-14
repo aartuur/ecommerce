@@ -22,6 +22,9 @@ import {
 import Prodotto from "../componenti/Prodotto"; // Componente Prodotto già esistente
 import { getCookieData } from "../App";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { ProfilePic } from "../componenti/Navbar";
+import ChatIcon from "@mui/icons-material/ChatOutlined"
+import base64 from "base-64"
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -178,28 +181,19 @@ const Profile = () => {
     }
   };
 
-  console.log(prodottiPreferiti, prodottiPubblicati)
+  const googleAvatar = userData.picture && userData.picture
+  const normalAvatar = !googleAvatar && userData.username.slice(0, 2).toUpperCase()
+
   return (
-    <Box sx={{ py: 8, backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
+    <Box sx={{ py: 8, backgroundColor: "rgba(255,255,255,.4)", minHeight: "100vh", color: "rgba(255,255,255,.8)" }}>
       <Container maxWidth="lg">
         {/* Sezione Profilo Utente */}
         <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
           {/* Avatar */}
-          <Avatar
-            sx={{
-              width: 150,
-              height: 150,
-              bgcolor: "primary.main",
-              fontSize: "4rem",
-              fontWeight: 600,
-              mr: 4,
-            }}
-          >
-            {userData?.username?.slice(0, 2).toUpperCase()}
-          </Avatar>
+          <ProfilePic googleAvatar={googleAvatar} normalAvatar={normalAvatar} size={175} fontSize={50} />
 
           {/* Dettagli Utente */}
-          <Box sx={{ flexGrow: 1 }}>
+          <Box sx={{ flexGrow: 1 }} ml={4}>
             <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
               {userData?.username || "Guest"}
             </Typography>
@@ -208,7 +202,7 @@ const Profile = () => {
             </Typography>
 
             {/* Statistiche Followers/Following */}
-            <Box sx={{ display: "flex", gap: 4, mb: 2 }}>
+            <Box sx={{ display: "flex", gap: 4, mb: 2, color: "black" }}>
               <Box sx={{ cursor: "pointer" }} onClick={() => setOpenFollowersPopup(true)}>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   {followers.length}
@@ -238,6 +232,22 @@ const Profile = () => {
                 {isFollowing ? "Segui già" : "Segui"}
               </Button>
             )}
+            {!isMyself && (
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<ChatIcon />}
+                onClick={() => {
+                  const roomId = base64.encode([sessionUserData?.id, userId].sort().join("_"));
+
+                  navigate(`/chat/${roomId}`);
+                }}
+                sx={{ mt: 2, ml: 2 }}
+              >
+                Messaggio
+              </Button>
+            )}
+            
           </Box>
         </Box>
 
@@ -270,7 +280,7 @@ const Profile = () => {
           Prodotti Preferiti
         </Typography>
         {prodottiPreferiti.length > 0 ? (
-          <Grid container spacing={4}>
+          <Grid container spacing={3}>
             {prodottiPreferiti.map((prodotto) => (
               <Grid item xs={12} sm={6} md={4} key={prodotto.id}>
                 <Prodotto prodotto={prodotto} />
@@ -312,7 +322,7 @@ const Profile = () => {
                 {followers.map((follower) => (
                   <ListItem
                     key={follower.id}
-                    sx={{ display: "flex", alignItems: "center",justifyContent:"start", py: 1.5, px: 2, cursor: "pointer" }}
+                    sx={{ display: "flex", alignItems: "center", justifyContent: "start", py: 1.5, px: 2, cursor: "pointer" }}
                     onClick={() => navigate(`/profile/${follower.id}`)} // Naviga al profilo dell'utente
                   >
                     {/* Avatar */}
@@ -387,7 +397,7 @@ const Profile = () => {
                 {following.map((followed) => (
                   <ListItem
                     key={followed.id}
-                    sx={{ display: "flex", alignItems: "center",justifyContent:"start", py: 1.5, px: 2, cursor: "pointer" }}
+                    sx={{ display: "flex", alignItems: "center", justifyContent: "start", py: 1.5, px: 2, cursor: "pointer" }}
                     onClick={() => navigate(`/profile/${followed.id}`)} // Naviga al profilo dell'utente
                   >
                     {/* Avatar */}

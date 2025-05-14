@@ -47,9 +47,10 @@ const AggiungiProdotto = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(JSON.parse(getCookieData(Cookies.get("SSDT"))))
 
-    const pubblicatoDa = Cookies.get("SSDT") ? JSON.parse(getCookieData(Cookies.get("SSDT"))).username : "guest"
+    const ssdt = JSON.parse(getCookieData(Cookies.get("SSDT")))
+    const pubblicatoDa = Cookies.get("SSDT") ? ssdt.username : "guest"
+    const profilePic = ssdt.picture ? ssdt.picture : false
 
     const formDataToSend = new FormData();
     formDataToSend.append("Nome", formData.Nome);
@@ -57,6 +58,7 @@ const AggiungiProdotto = () => {
     formDataToSend.append("Prezzo", formData.Prezzo);
     formDataToSend.append("image", formData.image); // Invia il file immagine
     formDataToSend.append("pubblicatoDa", pubblicatoDa);
+    profilePic && formDataToSend.append("profilePic",profilePic)
 
     try {
       const response = await fetch("http://localhost:14577/product/add-prod", {

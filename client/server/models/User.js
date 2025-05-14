@@ -19,6 +19,12 @@ const User = new EntitySchema({
     },
     password: {
       type: "varchar",
+      nullable:true
+    },
+    picture:{
+      type:"varchar",
+      length:500,
+      nullable:true,
     },
     createdAt: {
       type: "timestamp",

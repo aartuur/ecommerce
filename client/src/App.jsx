@@ -1,13 +1,26 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./componenti/Navbar";
-import { Box, Container, Divider, Typography, Grid } from "@mui/material";
+import {
+  Box,
+  Container,
+  Divider,
+  Typography,
+  Grid,
+  CircularProgress,
+  Backdrop,
+  Button,
+  useMediaQuery,
+} from "@mui/material";
 import axios from "axios";
 import Prodotto from "./componenti/Prodotto";
 import Section from "./componenti/Section";
 import Cookies from "js-cookie";
 import base64 from "base-64";
+import ContactUs from "./componenti/ContactUs";
+import { Link } from "react-router-dom";
 
-export const getCookieData = (cookie) => (cookie ? JSON.parse(base64.decode(cookie)) : "");
+export const getCookieData = (cookie) =>
+  cookie ? JSON.parse(base64.decode(cookie)) : "";
 
 function App() {
   const [prodotti, setProdotti] = useState([]);
@@ -16,13 +29,13 @@ function App() {
   const sessionCookie = Cookies.get("SSDT");
   const isLogged = Boolean(sessionCookie);
 
-  // Funzione per decodificare i dati del cookie
-
   useEffect(() => {
     const fetchProdotti = async () => {
       try {
         const limite = 6;
-        const response = await axios.get(`http://localhost:14577/product/get-prods/${limite}`);
+        const response = await axios.get(
+          `http://localhost:14577/product/get-prods/${limite}`
+        );
         setProdotti(response.data.prodotti);
       } catch (error) {
         console.error("Errore durante il recupero dei prodotti:", error);
@@ -31,11 +44,9 @@ function App() {
       }
     };
 
-
     fetchProdotti();
   }, []);
 
-  // Funzione per gestire il like di un prodotto
   const handleLike = async (prodottoId) => {
     try {
       const username = isLogged && getCookieData(Cookies.get("SSDT"))?.username;
@@ -45,14 +56,11 @@ function App() {
         return;
       }
 
-      // Invia la richiesta al server per aggiungere il like
       const response = await axios.post("http://localhost:14577/product/add-like", {
         prodottoId,
         username,
       });
 
-
-      // Aggiorna lo stato locale per riflettere il nuovo numero di preferiti
       setProdotti((prevProdotti) =>
         prevProdotti.map((prodotto) =>
           prodotto.id === prodottoId
@@ -66,29 +74,76 @@ function App() {
   };
 
   return (
-    <Box width="100vw">
-      <Navbar />
-      <Section />
-      {isLogged && (
-        <Container maxWidth="lg" sx={{mt:10}}>
-          <Typography variant="h3" sx={{ my: 4,color:"white",fontWeight:"bold" }}>
-            Prodotti per te
-          </Typography>
-          {loading ? (
-            <Typography variant="body1">Caricamento...</Typography>
-          ) : (
-            <Grid container spacing={4}>
+    <>
+      <Box width="100vw" mb={5}>
+        {/* Componente Navbar */}
+        <Navbar />
+
+        {/* Componente Section */}
+        <Section />
+
+        {/* Loader Globale */}
+        <Backdrop
+          sx={{
+            color: "#fff",
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          open={loading}
+        >
+          <CircularProgress color="primary" size={80} thickness={4} />
+        </Backdrop>
+
+        {/* Contenuto Principale */}
+        {isLogged && (
+          <Container sx={{ mt: 10 }} name="prodotti-section">
+            <Typography variant="h3" sx={{ my: 4, color: "white", fontWeight: "bold" }}>
+              Prodotti per te
+            </Typography>
+
+            <Grid container spacing={3}>
               {prodotti.map((prodotto) => (
-                <Grid item xs={12} sm={6} md={4} key={prodotto.id}>
-                  <Prodotto prodotto={prodotto} onLike={handleLike} />
+                <Grid
+                  item
+                  xs={12}         // 1 per riga su mobile
+                  sm={6}          // 2 per riga su tablet
+                  md={4}          // ✅ 3 per riga su desktop (12 / 3 = 4)
+                  key={prodotto.id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    px: { xs: 1, sm: 2 },
+                  }}
+                >
+                  <Box sx={{ width: "100%", maxWidth: { xs: "100%", sm: "450px", md: "335px" } }}>
+                    <Prodotto prodotto={prodotto} onLike={handleLike} />
+                  </Box>
                 </Grid>
               ))}
             </Grid>
-          )}
-        </Container>
-      )}
-      <Divider />
-    </Box>
+
+            <Box
+              width="100%"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              mb={2}
+            >
+              <Button variant="outlined" component={Link} to="/prodotti">
+                Vedi tutti
+              </Button>
+            </Box>
+          </Container>
+        )}
+        <Divider />
+      </Box>
+
+      {/* CONTATTACI */}
+      <ContactUs name="contact-us-section"/>
+    </>
   );
 }
 

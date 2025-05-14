@@ -32,6 +32,10 @@ const Prodotto = new EntitySchema({
       type: "uuid",
       nullable: false,
     },
+    picture:{
+      type:"varchar",
+      length:500
+    },
     imageId: {
       type: "int", 
       nullable: true,
@@ -45,6 +49,7 @@ const Prodotto = new EntitySchema({
         name: "pubblicatoDaId",
       },
     },
+    
     image: {
       target: "Image",
       type: "one-to-one",

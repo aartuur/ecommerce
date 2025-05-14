@@ -1,0 +1,10 @@
+Stavo facendo un route per tradurre l'id utente nell utente vero e proprio
+Voglio che venga mostrato nel prodotto pubblicatoDa:username e se ci clicco sopra mi deve portare al route client /profile/:idPubblicatore
+
+Sistemare i like, un utente ora se mette like a un post a cui ha gia messo like,i like aumentano.Voglio che un utente puo mettere massimo like 1 volta al post e toglierlo in caso riprema il tasto
+
+Nel profilo, nella mostra dei prodotti preferiti, non devi mostrare i prodotti creati da me stesso in caso ci siano 
+
+{/* Popup Followers => nel futuro crea componente FollowX che dinamicamente mostri sia i follwer che following */}
+
+la scritta grande nella section falla colore trasparente e bordi azzurri

@@ -1,9 +1,10 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
-import { getManager } from "typeorm"; // Importa getManager da TypeORM
-import User from "../models/User.js"; // Importa il modello User
+import { getManager } from "typeorm";
+import User from "../models/User.js";
 import base64 from "base-64"
 
+// http://localhost:14577/auth/*
 const authRouter = Router();
 
 authRouter.post("/registrati", async (req, res) => {
@@ -48,7 +49,6 @@ authRouter.post("/registrati", async (req, res) => {
 authRouter.post("/login", (req, res) => {
     const { email, password } = req.body;
   
-    // Validazione dei campi
     if (!email || !password) {
       return res.status(400).json({ error: "Tutti i campi sono obbligatori." });
     }

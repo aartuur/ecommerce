@@ -7,7 +7,6 @@ import Follower from "../models/Follower.js"
 
 const userRouter = new Router()
 
-// Voglio mostrare i prodotti preferiti dall'utente loggato, sarebbe meglio metterla in prod.js ma vabbe ormai :)
 userRouter.get("/preferiti", async (req, res) => {
     try {
       const { userId } = req.query;
@@ -43,7 +42,7 @@ userRouter.get("/preferiti", async (req, res) => {
             Commenti: prodotto.Commenti,
             imageId: prodotto.imageId, 
             pubblicatoDaId: prodotto.pubblicatoDaId, 
-            pubblicatoDa: utente?.username , 
+            pubblicatoDa: utente, 
           };
         })
       );
