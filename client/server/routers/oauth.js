@@ -3,18 +3,20 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import cors from "cors";
 import axios from "axios";
+import dotenv from "dotenv"
 import { getManager } from "typeorm";
 import User from "../models/User.js"; // Assicurati che il modello User sia definito correttamente
 
 const oauthRouter = Router();
+dotenv.config()
 
 // Configura Passport con la strategia Google OAuth2
 passport.use(
   new GoogleStrategy(
     {
-      clientID: "714603803383-29nq8c0fl34kvo93m63j33um0m6vq5h0.apps.googleusercontent.com",
-      clientSecret: "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",
-      callbackURL: "http://localhost:14577/oauth/callback",
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      callbackURL: process.env.CLIENT_CALLBACK ,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
