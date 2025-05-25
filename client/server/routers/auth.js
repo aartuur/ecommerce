@@ -2,9 +2,7 @@ import { Router } from "express";
 import bcrypt from "bcrypt";
 import { getManager } from "typeorm";
 import User from "../models/User.js";
-import base64 from "base-64"
 
-// http://localhost:14577/auth/*
 const authRouter = Router();
 
 authRouter.post("/registrati", async (req, res) => {
@@ -16,72 +14,69 @@ authRouter.post("/registrati", async (req, res) => {
     }
 
     const userRepository = getManager().getRepository(User);
-
     const existingUser = await userRepository.findOne({ where: { email } });
 
     if (existingUser) {
       return res.status(409).json({ error: "Email già registrata." });
     }
 
-    const salt = await bcrypt.genSalt(15);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, await bcrypt.genSalt(15));
 
     const newUser = userRepository.create({
       username,
       email,
-      password: hashedPassword, 
+      password: hashedPassword,
     });
 
     await userRepository.save(newUser);
 
-    return res.status(201).json({
-        message: "Utente registrato con successo!",
-        data:{
-            username,timestamps:new Date().toISOString(),id:newUser.id
-        }
+    res.status(201).json({
+      message: "Utente registrato con successo!",
+      data: {
+        username,
+        timestamps: new Date().toISOString(),
+        id: newUser.id,
+      },
     });
   } catch (error) {
     console.error("Errore durante la registrazione:", error);
-    return res.status(500).json({ error: "Errore interno del server." });
+    res.status(500).json({ error: "Errore interno del server." });
   }
 });
 
-authRouter.post("/login", (req, res) => {
-    const { email, password } = req.body;
-  
-    if (!email || !password) {
-      return res.status(400).json({ error: "Tutti i campi sono obbligatori." });
-    }
-  
+authRouter.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Tutti i campi sono obbligatori." });
+  }
+
+  try {
     const userRepository = getManager().getRepository(User);
-  
-    userRepository.findOne({ where: { email } }).then((user) => {
-      if (!user) {
-        return res.status(403).json({ error: "Email non registrata." });
-      }
-  
-      bcrypt.compare(password, user.password, (err, isMatch) => {
-        if (err) {
-          console.error("Errore durante la verifica della password:", err);
-          return res.status(500).json({ error: "Errore interno del server." });
-        }
-  
-        if (isMatch) {
-          return res.status(200).json({
-            message: "Login effettuato con successo.",
-            data: {
-              username: user.username,
-              timestamps: new Date().toISOString(),
-              id:user.id
-            },
-          });
-        } else {
-          return res.status(403).json({ error: "Credenziali errate." });
-        }
-      });
-    }).catch((error) => {
-      console.error("Errore durante la ricerca dell'utente:", error);
-      return res.status(500).json({ error: "Errore interno del server." });
+    const user = await userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(403).json({ error: "Email non registrata." });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(403).json({ error: "Credenziali errate." });
+    }
+
+    res.status(200).json({
+      message: "Login effettuato con successo.",
+      data: {
+        username: user.username,
+        timestamps: new Date().toISOString(),
+        id: user.id,
+      },
     });
-  });
+  } catch (error) {
+    console.error("Errore durante il login:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+});
+
 export default authRouter;

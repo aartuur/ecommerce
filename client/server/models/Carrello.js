@@ -1,40 +1,40 @@
 import { EntitySchema } from "typeorm";
 
 const Carrello = new EntitySchema({
-  name: "Carrello", // Name of the entity
-  tableName: "carrello", // Table name in the database
+  name: "Carrello", 
+  tableName: "carrello", 
   columns: {
     id: {
-      type: "uuid", // Unique identifier for the cart entry
+      type: "uuid",
       primary: true,
-      generated: "uuid", // Automatically generates UUIDs
+      generated: "uuid",
     },
     productId: {
-      type: "uuid", // UUID of the product added to the cart
+      type: "uuid",
       nullable: false,
     },
     cartedFrom: {
-      type: "uuid", // UUID of the user who added the product to the cart
+      type: "uuid", 
       nullable: false,
     },
     quantity: {
-      type: "integer", // Quantity of the product in the cart (optional but useful)
-      default: 1, // Default value is 1
+      type: "integer", 
+      default: 1, 
     },
     createdAt: {
-      type: "timestamp", // Timestamp for when the entry was created
-      createDate: true, // Automatically managed by TypeORM
+      type: "timestamp", 
+      createDate: true, 
     },
     updatedAt: {
-      type: "timestamp", // Timestamp for when the entry was last updated
-      updateDate: true, // Automatically managed by TypeORM
+      type: "timestamp",
+      updateDate: true, 
     },
   },
   indices: [
     {
-      name: "IDX_PRODUCT_USER", // Index for faster querying
+      name: "IDX_PRODUCT_USER",
       columns: ["productId", "cartedFrom"],
-      unique: true, // Ensures a user cannot add the same product twice
+      unique: true,
     },
   ],
 });

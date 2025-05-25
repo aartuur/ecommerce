@@ -17,11 +17,10 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { styled } from "@mui/material/styles";
 
-// Stili personalizzati per la sezione di contatto
 const ContactSection = styled(Box)(({ theme }) => ({
-    backgroundColor: "rgba(0,0,0,.6)", // Colore sfondo scuro
-    padding: "20px", // Ridotto lo spazio interno
-    color: "#fff", // Testo bianco
+    backgroundColor: "rgba(0,0,0,.6)", 
+    padding: "20px", 
+    color: "#fff", 
 }));
 
 const ContactForm = styled(Box)(({ theme }) => ({
@@ -29,37 +28,37 @@ const ContactForm = styled(Box)(({ theme }) => ({
     maxWidth: 750,
     display: "flex",
     flexDirection: "column",
-    gap: theme.spacing(2), // Ridotto lo spazio tra gli elementi
+    gap: theme.spacing(2), 
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
     "& .MuiOutlinedInput-root": {
         color: "white",
         "& fieldset": {
-            borderColor: "#3d85c6", // Colore blu per i bordi degli input
+            borderColor: "#3d85c6", 
 
         },
         "&:hover fieldset": {
-            borderColor: "#337ab7", // Colore hover più scuro
+            borderColor: "#337ab7", 
         },
         "&.Mui-focused fieldset": {
-            borderColor: "#337ab7", // Colore quando è focalizzato
+            borderColor: "#337ab7",
         },
     },
     "& label.Mui-focused": {
-        color: "#337ab7", // Colore etichetta quando è focalizzato
+        color: "#337ab7",
     },
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-    backgroundColor: "#3d85c6", // Colore blu del bottone
+    backgroundColor: "#3d85c6", 
     color: "#fff",
-    borderRadius: "8px", // Bordo arrotondato
-    textTransform: "none", // Disabilita la trasformazione in maiuscolo
-    fontSize: "16px", // Dimensione del testo
-    padding: "12px 24px", // Spessore del bottone
+    borderRadius: "8px",
+    textTransform: "none", 
+    fontSize: "16px",
+    padding: "12px 24px", 
     "&:hover": {
-        backgroundColor: "#337ab7", // Colore hover più scuro
+        backgroundColor: "#337ab7",
     },
 }));
 

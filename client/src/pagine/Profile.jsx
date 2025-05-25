@@ -59,10 +59,11 @@ const Profile = () => {
     }
   }
 
-  const userId = getIdUtenteFromUrl(); // Ottieni l'ID utente dall'URL
+  const userId = getIdUtenteFromUrl(); 
 
   useEffect(() => {
-    let isMounted = true; // Variabile per controllare se il componente è ancora montato
+    window.scrollTo(0,0)
+    let isMounted = true; 
 
     const fetchUserData = async () => {
       try {
@@ -159,17 +160,14 @@ const Profile = () => {
     );
   }
 
-  // Funzione per seguire un utente
   const handleFollow = async () => {
     try {
       if (isFollowing) {
-        // Smetti di seguire l'utente
         await axios.delete("http://localhost:14577/user/unfollow", {
           params: { followerId: sessionUserData.id, followedId: userId },
         });
         setIsFollowing(false);
       } else {
-        // Segui l'utente
         await axios.post("http://localhost:14577/user/follow", {
           followerId: sessionUserData.id,
           followedId: userId,
@@ -187,12 +185,9 @@ const Profile = () => {
   return (
     <Box sx={{ py: 8, backgroundColor: "rgba(255,255,255,.4)", minHeight: "100vh", color: "rgba(255,255,255,.8)" }}>
       <Container maxWidth="lg">
-        {/* Sezione Profilo Utente */}
         <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
-          {/* Avatar */}
           <ProfilePic googleAvatar={googleAvatar} normalAvatar={normalAvatar} size={175} fontSize={50} />
 
-          {/* Dettagli Utente */}
           <Box sx={{ flexGrow: 1 }} ml={4}>
             <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
               {userData?.username || "Guest"}
@@ -201,7 +196,6 @@ const Profile = () => {
               {userData?.email || "Nessuna email disponibile"}
             </Typography>
 
-            {/* Statistiche Followers/Following */}
             <Box sx={{ display: "flex", gap: 4, mb: 2, color: "black" }}>
               <Box sx={{ cursor: "pointer" }} onClick={() => setOpenFollowersPopup(true)}>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
@@ -221,7 +215,6 @@ const Profile = () => {
               </Box>
             </Box>
 
-            {/* Bottone per Seguire/Smettere di Seguire */}
             {!isMyself && (
               <Button
                 variant="contained"
@@ -239,7 +232,6 @@ const Profile = () => {
                 startIcon={<ChatIcon />}
                 onClick={() => {
                   const roomId = base64.encode([sessionUserData?.id, userId].sort().join("_"));
-
                   navigate(`/chat/${roomId}`);
                 }}
                 sx={{ mt: 2, ml: 2 }}
@@ -251,10 +243,8 @@ const Profile = () => {
           </Box>
         </Box>
 
-        {/* Divider */}
         <Divider sx={{ my: 4 }} />
 
-        {/* Prodotti Pubblicati */}
         <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
           Prodotti Pubblicati
         </Typography>
@@ -272,10 +262,8 @@ const Profile = () => {
           </Typography>
         )}
 
-        {/* Divider */}
         <Divider sx={{ my: 4 }} />
 
-        {/* Prodotti Preferiti */}
         <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
           Prodotti Preferiti
         </Typography>
@@ -293,18 +281,17 @@ const Profile = () => {
           </Typography>
         )}
 
-        {/* Popup Followers => nel futuro crea componente FollowX che dinamicamente mostri sia i follwer che following */}
         <Dialog
           open={openFollowersPopup}
           onClose={() => setOpenFollowersPopup(false)}
           PaperProps={{
             sx: {
               borderRadius: 2,
-              maxWidth: 400, // Larghezza massima
-              maxHeight: 600, // Altezza massima
+              maxWidth: 400, 
+              maxHeight: 600, 
               overflow: "hidden",
               "& .MuiDialogContent-root": {
-                padding: 0, // Rimuovi padding interno
+                padding: 0, 
               },
             },
           }}
@@ -323,9 +310,8 @@ const Profile = () => {
                   <ListItem
                     key={follower.id}
                     sx={{ display: "flex", alignItems: "center", justifyContent: "start", py: 1.5, px: 2, cursor: "pointer" }}
-                    onClick={() => navigate(`/profile/${follower.id}`)} // Naviga al profilo dell'utente
+                    onClick={() => navigate(`/profile/${follower.id}`)}
                   >
-                    {/* Avatar */}
                     <Button
                       component="a"
                       href={`/profile/${follower.id}`}
@@ -345,7 +331,6 @@ const Profile = () => {
                       </Avatar>
                     </Button>
 
-                    {/* Username */}
                     <ListItemText
                       primary={
                         <Button
@@ -368,18 +353,17 @@ const Profile = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Popup Following */}
         <Dialog
           open={openFollowingPopup}
           onClose={() => setOpenFollowingPopup(false)}
           PaperProps={{
             sx: {
               borderRadius: 2,
-              maxWidth: 400, // Larghezza massima
-              maxHeight: 600, // Altezza massima
+              maxWidth: 400, 
+              maxHeight: 600, 
               overflow: "hidden",
               "& .MuiDialogContent-root": {
-                padding: 0, // Rimuovi padding interno
+                padding: 0, 
               },
             },
           }}
@@ -398,9 +382,8 @@ const Profile = () => {
                   <ListItem
                     key={followed.id}
                     sx={{ display: "flex", alignItems: "center", justifyContent: "start", py: 1.5, px: 2, cursor: "pointer" }}
-                    onClick={() => navigate(`/profile/${followed.id}`)} // Naviga al profilo dell'utente
+                    onClick={() => navigate(`/profile/${followed.id}`)}
                   >
-                    {/* Avatar */}
                     <Button
                       component="a"
                       href={`/profile/${followed.id}`}
@@ -419,7 +402,6 @@ const Profile = () => {
                       </Avatar>
                     </Button>
 
-                    {/* Username */}
                     <ListItemText
                       primary={
                         <Button

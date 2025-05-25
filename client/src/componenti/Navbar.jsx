@@ -21,7 +21,6 @@ import base64 from "base-64"
 import Cookies from "js-cookie";
 import { getCookieData } from "../App";
 import ChatIcon from "@mui/icons-material/ChatOutlined"
-// Componente per la Foto Profilo
 export const ProfilePic = ({ size = 32, googleAvatar, normalAvatar, fontSize = 16 }) => {
 
   return (
@@ -68,12 +67,10 @@ const Navbar = () => {
   return (
     <AppBar position="static" color="primary" sx={{ color: "rgb(255, 255, 255)", background: "rgb(108, 145, 212)", width: "100%", position: "fixed", top: 0, left: 0, zIndex: 1000 }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        {/* Logo */}
         <Typography variant="h6" component={Link} to="/" sx={{ textDecoration: "none", color: "white" }}>
           MyLogo
         </Typography>
 
-        {/* Navigazione Desktop */}
         {!isMobile && (
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             {isLogged ? (
@@ -84,7 +81,6 @@ const Navbar = () => {
                 <Button color="inherit" component={Link} to="/aggiungi-prodotto">
                   <Add sx={{ mr: 1, scale: 0.8 }} /> Prodotto
                 </Button>
-                {/* 👇 Nuovo bottone per i messaggi */}
                 <Button color="inherit" component={Link} to="/messaggi">
                   <ChatIcon sx={{ mr: 1 }} /> Messaggi
                 </Button>
@@ -108,7 +104,6 @@ const Navbar = () => {
           </Box>
         )}
 
-        {/* Menu Mobile */}
         {isMobile && (
           <>
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleMenuOpen}>

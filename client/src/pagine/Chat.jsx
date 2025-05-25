@@ -23,12 +23,11 @@ const Chat = () => {
   const { roomId } = useParams();
 
   const socketRef = useRef(null);
-  const messagesEndRef = useRef(null); // 👈 Nuovo ref per l'elemento finale
+  const messagesEndRef = useRef(null);
 
   const sessionCookie = Cookies.get("SSDT");
   const sessionUserData = sessionCookie ? JSON.parse(atob(sessionCookie)) : null;
 
-  // Funzione per scrollare in basso
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -72,10 +71,9 @@ const Chat = () => {
     };
   }, [roomId]);
 
-  // Esegui lo scroll ogni volta che i messaggi cambiano
   useEffect(() => {
     scrollToBottom();
-  }, [messaggi]); // 🔁 Triggera lo scroll su ogni nuovo messaggio
+  }, [messaggi]); 
 
   const inviaMessaggio = () => {
     if (!nuovoMessaggio.trim()) return;
@@ -86,7 +84,6 @@ const Chat = () => {
       dataInvio: new Date().toISOString(),
     };
 
-    // Invia SOLO al server
     socketRef.current.emit("send-message", {
       mittenteId,
       destinatarioId,
@@ -94,7 +91,6 @@ const Chat = () => {
       roomId,
     });
 
-    // Pulisci il campo immediatamente
     setNuovoMessaggio("");
   };
 
@@ -105,18 +101,16 @@ const Chat = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        height: "100vh", // Occupa tutta l'altezza dello schermo
+        height: "100vh",
         maxWidth: "md",
         margin: "0 auto",
         p: 2,
       }}
     >
-      {/* Titolo */}
       <Typography variant="h5" gutterBottom>
         Conversazione
       </Typography>
 
-      {/* Lista messaggi - Scrollabile */}
       <Box
         sx={{
           flex: 1,
@@ -124,7 +118,7 @@ const Chat = () => {
           bgcolor: "#e5e5e5",
           borderRadius: 2,
           p: 2,
-          mb: 2, // Spazio per l'input sotto
+          mb: 2,
           display: "flex",
           flexDirection: "column",
           gap: 1,
@@ -171,11 +165,9 @@ const Chat = () => {
           );
         })}
 
-        {/* Ancora per lo scroll automatico */}
         <div ref={messagesEndRef} />
       </Box>
 
-      {/* Input fisso in basso */}
       <Box
         sx={{
           display: "flex",

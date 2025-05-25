@@ -2,7 +2,7 @@ import { EntitySchema } from "typeorm";
 
 const Follower =  new EntitySchema({
   name: "Follower",
-  tableName: "follower", // Nome della tabella nel database
+  tableName: "follower", 
   columns: {
     id: {
       primary: true,
@@ -20,17 +20,17 @@ const Follower =  new EntitySchema({
   },
   relations: {
     follower: {
-      target: "User", // Puntiamo all'entità User
+      target: "User", 
       type: "many-to-one",
       joinColumn: {
-        name: "followerId", // Colonna che fa riferimento a User.id
+        name: "followerId",
       },
     },
     followed: {
-      target: "User", // Puntiamo all'entità User
+      target: "User",
       type: "many-to-one",
       joinColumn: {
-        name: "followedId", // Colonna che fa riferimento a User.id
+        name: "followedId", 
       },
     },
   },

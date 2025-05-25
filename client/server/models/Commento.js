@@ -23,14 +23,14 @@ const Commento = new EntitySchema({
         }
     },
     relations: {
-        user: { // Relazione con l'utente che ha scritto il commento
+        user: { 
             target: "User",
             type: "many-to-one",
             joinColumn: {
                 name: "senderId"
             }
         },
-        prodotto: { // Relazione con il prodotto a cui appartiene il commento
+        prodotto: {
             target: "Prodotto",
             type: "many-to-one",
             joinColumn: {

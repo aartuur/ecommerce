@@ -18,24 +18,19 @@ import oauthRouter from "./routers/oauth.js";
 import cartRouter from "./routers/cart.js";
 import Carrello from "./models/Carrello.js";
 import base64 from "base-64"
-
-// ======== SOCKET.IO CON ES MODULES =========
 import http from "http";
 import { Server } from "socket.io";
 import Messaggio from "./models/Messaggio.js";
 import Room from "./models/Room.js";
 import chatRouter from "./routers/chat.js";
 
-/* ======== DOTENV CONF ========= */
 dotenv.config();
-const PORT = process.env.SERVER_PORT || 80;
+const PORT = process.env.SERVER_PORT || 8080;
 
 const app = express();
 
-// Creazione del server HTTP
 const server = http.createServer(app);
 
-// Inizializzazione di Socket.IO
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
@@ -63,13 +58,14 @@ app.use("/oauth", oauthRouter);
 app.use("/cart", cartRouter);
 app.use("/chat", chatRouter)
 
+/* ========== CONNESSIONE AL DB ============= */
 createConnection({
   type: "mysql",
-  host: "localhost",
-  port: 3306,
-  username: "root",
-  password: "",
-  database: "ecommerce",
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   synchronize: true,
   logging: false,
   entities: [User, Prodotto, Image, Preferito, Follower, Commento, Carrello, Messaggio, Room],
@@ -87,11 +83,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-/* ================== SOCKET.IO =================== */
 
 // ================== SOCKET.IO ===================
 io.on("connection", (socket) => {
-  console.log(`[+] Nuovo client connesso (ID: ${socket.id})`);
 
   socket.on("join-room", async(roomId) => {
     const roomRepo = getRepository(Room)
@@ -101,16 +95,13 @@ io.on("connection", (socket) => {
 
     socket.join(roomId);
           
-    console.log(`Utente unito alla stanza ${roomId}`);
   });
 
   socket.on("send-message", async ({ roomId, mittenteId, destinatarioId, messaggio }) => {
-      console.log(roomId)
 
     try {
-      // Decode roomId to verify integrity (optional, but helpful)
       
-      const decoded = base64.decode(roomId); // expected format: "mittenteId_destinatarioId"
+      const decoded = base64.decode(roomId); // il room_id è passato come stringabase64([mittente_id,destinatario_id].sort())
       const [id1, id2] = decoded.split("_");
 
       if (![id1, id2].includes(String(mittenteId)) || ![id1, id2].includes(String(destinatarioId))) {

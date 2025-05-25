@@ -1,71 +1,58 @@
-import express, { Router } from "express"
-import { getRepository } from "typeorm"
-import Preferito from "../models/Preferito.js"
-import Prodotto from "../models/Prodotto.js"
-import User from "../models/User.js"
-import Follower from "../models/Follower.js"
+import express, { Router } from "express";
+import { getRepository } from "typeorm";
+import Preferito from "../models/Preferito.js";
+import Prodotto from "../models/Prodotto.js";
+import User from "../models/User.js";
+import Follower from "../models/Follower.js";
 
-const userRouter = new Router()
+const userRouter = Router();
 
 userRouter.get("/preferiti", async (req, res) => {
-    try {
-      const { userId } = req.query;
-  
-      if (!userId) {
-        return res.status(400).json({ error: "ID utente mancante." });
-      }
-  
-      const preferitiRepo = getRepository(Preferito);
-      const preferitiDaUtente = await preferitiRepo.find({
-        where: { userId },
-        relations: ["prodotto"], 
-      });
-  
-      if (!preferitiDaUtente ) {
-        return res.status(404).json({ msg: "Nessun prodotto preferito trovato per questo utente." });
-      }
+  try {
+    const { userId } = req.query;
 
-      const userRepo = getRepository(User)
-  
-      const prodottiPreferiti = preferitiDaUtente.map((preferito) => preferito.prodotto);
-
-      const prodottiConUsername = await Promise.all(
-        prodottiPreferiti.map(async (prodotto) => {
-          const utente = await userRepo.findOneBy({ id: prodotto.pubblicatoDaId });
-  
-          return {
-            id: prodotto.id,
-            Nome: prodotto.Nome,
-            Descrizione: prodotto.Descrizione,
-            Prezzo: prodotto.Prezzo,
-            nPreferiti: prodotto.nPreferiti,
-            Commenti: prodotto.Commenti,
-            imageId: prodotto.imageId, 
-            pubblicatoDaId: prodotto.pubblicatoDaId, 
-            pubblicatoDa: utente, 
-          };
-        })
-      );
-  
-      res.status(200).json({
-        msg: "Prodotti preferiti recuperati con successo.",
-        prodotti: prodottiConUsername,
-      });
-    } catch (error) {
-      console.error("Errore durante il recupero dei preferiti:", error);
-      res.status(500).json({ error: "Errore interno del server." });
+    if (!userId) {
+      return res.status(400).json({ error: "ID utente mancante." });
     }
-  });
 
-userRouter.get("/getUserById",async(req,res) => {
-    const {userId} = req.query
+    const preferitiRepo = getRepository(Preferito);
+    const preferitiDaUtente = await preferitiRepo.find({
+      where: { userId },
+      relations: ["prodotto"],
+    });
 
+    if (!preferitiDaUtente?.length) {
+      return res.status(404).json({
+        msg: "Nessun prodotto preferito trovato per questo utente.",
+      });
+    }
 
-    const userRepo = getRepository(User)
-    const user = await userRepo.findOneBy({id:userId})
+    const userRepo = getRepository(User);
+    const prodottiConUsername = await Promise.all(
+      preferitiDaUtente.map(async ({ prodotto }) => {
+        const utente = await userRepo.findOneBy({ id: prodotto.pubblicatoDaId });
+        return {
+          ...prodotto,
+          pubblicatoDa: utente,
+        };
+      })
+    );
 
-    res.status(200).json(user)
-})
+    res.status(200).json({
+      msg: "Prodotti preferiti recuperati con successo.",
+      prodotti: prodottiConUsername,
+    });
+  } catch (error) {
+    console.error("Errore durante il recupero dei preferiti:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+});
+
+userRouter.get("/getUserById", async (req, res) => {
+  const { userId } = req.query;
+  const user = await getRepository(User).findOneBy({ id: userId });
+  res.status(200).json(user);
+});
 
 userRouter.post("/follow", async (req, res) => {
   try {
@@ -76,18 +63,14 @@ userRouter.post("/follow", async (req, res) => {
     }
 
     const followerRepo = getRepository(Follower);
-
-    // Verifica se l'utente sta già seguendo
     const existingFollow = await followerRepo.findOne({
       where: { followerId, followedId },
     });
 
-    // Da gestire nel client, rimuovi successivamente
     if (existingFollow) {
       return res.status(400).json({ error: "Stai già seguendo questo utente." });
     }
 
-    // Crea un nuovo record di follow
     const newFollow = followerRepo.create({ followerId, followedId });
     await followerRepo.save(newFollow);
 
@@ -107,19 +90,13 @@ userRouter.delete("/unfollow", async (req, res) => {
     }
 
     const followerRepo = getRepository(Follower);
-
-    // Trova il record di follow
-    const follow = await followerRepo.findOne({
-      where: { followerId, followedId },
-    });
+    const follow = await followerRepo.findOne({ where: { followerId, followedId } });
 
     if (!follow) {
       return res.status(404).json({ error: "Non stai seguendo questo utente." });
     }
 
-    // Elimina il record di follow
     await followerRepo.remove(follow);
-
     res.status(200).json({ msg: "Hai smesso di seguire l'utente." });
   } catch (error) {
     console.error("Errore durante l'unfollow:", error);
@@ -138,10 +115,10 @@ userRouter.get("/followers", async (req, res) => {
     const followerRepo = getRepository(Follower);
     const followers = await followerRepo.find({
       where: { followedId: userId },
-      relations: ["follower"], // Assicurati di avere la relazione corretta nel modello
+      relations: ["follower"],
     });
 
-    const followerUsers = followers.map((f) => f.follower);
+    const followerUsers = followers.map(({ follower }) => follower);
 
     res.status(200).json({
       msg: "Followers recuperati con successo.",
@@ -162,9 +139,7 @@ userRouter.get("/isFollowing", async (req, res) => {
     }
 
     const followerRepo = getRepository(Follower);
-    const follow = await followerRepo.findOne({
-      where: { followerId, followedId },
-    });
+    const follow = await followerRepo.findOne({ where: { followerId, followedId } });
 
     res.status(200).json({ isFollowing: !!follow });
   } catch (error) {
@@ -184,10 +159,10 @@ userRouter.get("/following", async (req, res) => {
     const followerRepo = getRepository(Follower);
     const following = await followerRepo.find({
       where: { followerId: userId },
-      relations: ["followed"], // Assicurati di avere la relazione corretta nel modello
+      relations: ["followed"],
     });
 
-    const followedUsers = following.map((f) => f.followed);
+    const followedUsers = following.map(({ followed }) => followed);
 
     res.status(200).json({
       msg: "Utenti seguiti recuperati con successo.",
@@ -199,4 +174,4 @@ userRouter.get("/following", async (req, res) => {
   }
 });
 
-export default userRouter
+export default userRouter;

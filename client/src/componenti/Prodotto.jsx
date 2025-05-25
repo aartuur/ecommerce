@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import Cart from "@mui/icons-material/AddShoppingCartOutlined"
 import base64 from "base-64";
+import Edit from "@mui/icons-material/EditOutlined"
 import Cookies from "js-cookie";
 import AddCart from "@mui/icons-material/AddShoppingCartRounded";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -47,7 +48,9 @@ const Prodotto = ({ prodotto, onLike }) => {
   const [openModal, setOpenModal] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-
+  const [editingField, setEditingField] = useState(null); // Campo da modificare ("Descrizione", "Prezzo", etc.)
+  const [editedValue, setEditedValue] = useState("");    // Valore corrente dell'input
+  const [openEditModal, setOpenEditModal] = useState(false);
   const sessionCookieData = getCookieData(Cookies.get("SSDT"));
 
   console.log(prodotto)
@@ -90,6 +93,33 @@ const Prodotto = ({ prodotto, onLike }) => {
     setOpenModal(false);
   };
 
+  const handleModifica = () => {
+
+  }
+
+  const handleSaveChanges = async () => {
+    if (!editingField || editedValue.trim() === "") return;
+
+    try {
+      await axios.put(`http://localhost:14577/product/update`, {
+        productId: id,
+        field: editingField,
+        value: editedValue,
+      });
+
+      // Aggiorna il prodotto localmente
+      setProdotto((prev) => ({
+        ...prev,
+        [editingField]: editedValue,
+      }));
+
+      setOpenEditModal(false);
+      setEditingField(null);
+      setEditedValue("");
+    } catch (error) {
+      console.error("Errore durante l'aggiornamento:", error);
+    }
+  };
   const handleAddComment = () => {
     if (newComment.trim() === "") return;
 
@@ -121,6 +151,7 @@ const Prodotto = ({ prodotto, onLike }) => {
   const googleAvatar = pubblicatoDa?.picture && pubblicatoDa.picture;
   const avatar = pubblicatoDa?.username?.slice(0, 2)?.toUpperCase();
 
+  const isMyself = prodotto?.pubblicatoDa?.id === sessionCookieData?.id
   return (
     <Card
       sx={{
@@ -167,6 +198,20 @@ const Prodotto = ({ prodotto, onLike }) => {
             <FavoriteIcon fontSize="small" sx={{ color: red[500] }} />
           </IconButton>
           <Typography variant="caption">{nPreferiti}</Typography>
+
+          {isMyself && (
+            <IconButton
+              aria-label="edit product"
+              size="small"
+              onClick={() => {
+                setEditingField("Descrizione"); 
+                setEditedValue(Descrizione);
+                setOpenEditModal(true);
+              }}
+            >
+              <Edit sx={{ scale: 0.9 }} />
+            </IconButton>
+          )}
         </Box>
       </Box>
 
@@ -251,7 +296,7 @@ const Prodotto = ({ prodotto, onLike }) => {
           }}
           onClick={() => handleAddToCart(id)}
         >
-          <Cart sx={{scale:.8,mr:.5}}/> Aggiungi
+          <Cart sx={{ scale: .8, mr: .5 }} /> Aggiungi
         </Button>
 
         {/* Commenti Button */}
@@ -268,7 +313,7 @@ const Prodotto = ({ prodotto, onLike }) => {
           }}
           onClick={handleOpenModal}
         >
-          <Comments sx={{scale:.8,mr:.5}} /> commenti
+          <Comments sx={{ scale: .8, mr: .5 }} /> commenti
         </Button>
       </Stack>
 
@@ -337,6 +382,37 @@ const Prodotto = ({ prodotto, onLike }) => {
               Invia
             </Button>
           </Box>
+        </Paper>
+      </Modal>
+      {/* Modal per modifica prodotto */}
+      <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
+        <Paper
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            padding: 3,
+            boxShadow: 24,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Modifica {editingField}
+          </Typography>
+
+          <TextField
+            fullWidth
+            label={`Nuovo ${editingField}`}
+            value={editedValue}
+            onChange={(e) => setEditedValue(e.target.value)}
+            variant="outlined"
+            sx={{ mb: 2 }}
+          />
+
+          <Button variant="contained" color="primary" onClick={handleSaveChanges}>
+            Salva
+          </Button>
         </Paper>
       </Modal>
     </Card>

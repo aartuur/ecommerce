@@ -10,7 +10,6 @@ const ChatList = () => {
   const sessionData = sessionCookie ? JSON.parse(base64.decode(sessionCookie)) : null;
   const userId = sessionData?.id;
 
-  // Simuliamo un fetch delle chat (puoi sostituirlo con una chiamata API reale)
   useEffect(() => {
     const fetchChats = async () => {
       try {
@@ -44,10 +43,9 @@ const ChatList = () => {
       ) : (
         <List>
           {chats.map((chat, index) => {
-            // Verifica se ci sono dati validi
             if (!chat || !chat.partner || !chat.partner.id) {
               console.warn("Chat malformata:", chat);
-              return null; // Salta le chat malformate
+              return null;
             }
 
             const { username } = chat.partner;

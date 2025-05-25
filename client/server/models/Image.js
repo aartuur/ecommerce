@@ -10,7 +10,7 @@ const Image = new EntitySchema({
         generated: "uuid",
     },
     data: {
-      type: "mediumblob", // Dati binari dell'immagine
+      type: "mediumblob", 
       nullable: false,
     },
     contentType: {
@@ -28,8 +28,8 @@ const Image = new EntitySchema({
     prodotto: {
       target: "Prodotto",
       type: "one-to-one",
-      inverseSide: "image", // Nome della proprietà nel modello Prodotto
-      onDelete: "CASCADE", // Elimina l'immagine se il prodotto viene eliminato
+      inverseSide: "image", 
+      onDelete: "CASCADE", 
     },
   },
 });

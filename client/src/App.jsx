@@ -18,6 +18,7 @@ import Cookies from "js-cookie";
 import base64 from "base-64";
 import ContactUs from "./componenti/ContactUs";
 import { Link } from "react-router-dom";
+import FadeInOnView from "./componenti/FadeInOnView";
 
 export const getCookieData = (cookie) =>
   cookie ? JSON.parse(base64.decode(cookie)) : "";
@@ -105,12 +106,12 @@ function App() {
             </Typography>
 
             <Grid container spacing={3}>
-              {prodotti.map((prodotto) => (
+              {prodotti.map((prodotto, index) => (
                 <Grid
                   item
-                  xs={12}         // 1 per riga su mobile
-                  sm={6}          // 2 per riga su tablet
-                  md={4}          // ✅ 3 per riga su desktop (12 / 3 = 4)
+                  xs={12}
+                  sm={6}
+                  md={4}
                   key={prodotto.id}
                   sx={{
                     display: "flex",
@@ -118,11 +119,14 @@ function App() {
                     px: { xs: 1, sm: 2 },
                   }}
                 >
-                  <Box sx={{ width: "100%", maxWidth: { xs: "100%", sm: "450px", md: "335px" } }}>
-                    <Prodotto prodotto={prodotto} onLike={handleLike} />
-                  </Box>
+                  <FadeInOnView delay={index * 0.1} yOffset={50}>
+                    <Box sx={{ width: "100%", maxWidth: { xs: "100%", sm: "450px", md: "335px" } }}>
+                      <Prodotto prodotto={prodotto} onLike={handleLike} />
+                    </Box>
+                  </FadeInOnView>
                 </Grid>
               ))}
+
             </Grid>
 
             <Box
@@ -142,7 +146,7 @@ function App() {
       </Box>
 
       {/* CONTATTACI */}
-      <ContactUs name="contact-us-section"/>
+      <ContactUs name="contact-us-section" />
     </>
   );
 }

@@ -20,7 +20,6 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
-// Crea un tema scuro personalizzato
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -62,8 +61,8 @@ const Registrati = () => {
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Mostra/Nascondi password
-  const [loading, setLoading] = useState(false); // Stato di caricamento
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -97,7 +96,7 @@ const Registrati = () => {
     e.preventDefault();
     setError("");
     setSuccess(false);
-    setLoading(true); // Attiva lo stato di caricamento
+    setLoading(true); 
 
     try {
       const response = await axios.post("http://localhost:14577/auth/registrati", formData);
@@ -106,19 +105,19 @@ const Registrati = () => {
         const cookieData = base64.encode(
           JSON.stringify({ ...response?.data?.data, avatar: response?.data?.data?.username?.slice(0, 2) })
         );
-        Cookies.set("SSDT", cookieData); // seSSion DaTa
+        Cookies.set("SSDT", cookieData); 
 
         setSuccess(true);
-        setFormData({ username: "", email: "", password: "" }); // Resetta il form
+        setFormData({ username: "", email: "", password: "" })
         setTimeout(() => {
           navigate("/");
-        }, 1000); // Ritardo per mostrare il messaggio di successo
+        }, 1000); 
       }
     } catch (err) {
       console.error("Errore durante la registrazione:", err);
       setError(err.response?.data?.error || "Errore durante la registrazione.");
     } finally {
-      setLoading(false); // Disattiva lo stato di caricamento
+      setLoading(false); 
     }
   };
 
@@ -213,7 +212,7 @@ const Registrati = () => {
                 borderRadius: "25px",
                 bgcolor: "primary.main",
                 "&:hover": {
-                  bgcolor: "#3700b3", // Cambia colore al passaggio del mouse
+                  bgcolor: "#3700b3",
                 },
               }}
             >

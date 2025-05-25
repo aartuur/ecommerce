@@ -6,7 +6,6 @@ import Prodotto from '../componenti/Prodotto';
 const Prodotti = () => {
   const [prods, setProds] = useState(null);
 
-  // Query media per rilevare dispositivi mobili
   const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
@@ -47,7 +46,7 @@ const Prodotti = () => {
               md={4}
               key={index}
               sx={{
-                width: isMobile ? '100%' : 'auto', // Forza 100% su mobile
+                width: isMobile ? '100%' : 'auto',
                 display: 'flex',
                 justifyContent: 'center',
               }}
