@@ -48,8 +48,8 @@ const Prodotto = ({ prodotto, onLike }) => {
   const [openModal, setOpenModal] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [editingField, setEditingField] = useState(null); // Campo da modificare ("Descrizione", "Prezzo", etc.)
-  const [editedValue, setEditedValue] = useState("");    // Valore corrente dell'input
+  const [editingField, setEditingField] = useState(null); 
+  const [editedValue, setEditedValue] = useState("");    
   const [openEditModal, setOpenEditModal] = useState(false);
   const sessionCookieData = getCookieData(Cookies.get("SSDT"));
 
@@ -215,15 +215,13 @@ const Prodotto = ({ prodotto, onLike }) => {
         </Box>
       </Box>
 
-      {/* Immagine del Prodotto */}
       <CardMedia
         component="img"
         height="200"
-        width="100%" // Ensure full width
-        image={immagine || "https://via.placeholder.com/345x200"} // Fallback if image is not available
+        image={immagine || "https://via.placeholder.com/345x200"}
         alt={Nome}
         sx={{
-          objectFit: "cover", // Ensures image fills container without distortion
+          objectFit: "cover", 
           transition: "transform 0.3s ease-in-out",
           "&:hover": {
             transform: "scale(1.05)",
@@ -231,15 +229,13 @@ const Prodotto = ({ prodotto, onLike }) => {
         }}
       />
 
-      {/* Contenuto del Prodotto */}
       <CardContent
         sx={{
-          flexGrow: 1, // Take up remaining space
+          flexGrow: 1, 
           padding: 2,
-          overflow: "hidden", // Prevent overflowing content from breaking the layout
+          overflow: "hidden", 
         }}
       >
-        {/* Nome del Prodotto */}
         <Typography
           variant="h5"
           gutterBottom
@@ -248,20 +244,18 @@ const Prodotto = ({ prodotto, onLike }) => {
           {Nome}
         </Typography>
 
-        {/* Descrizione del Prodotto */}
         <Typography
           variant="body2"
           color="text.secondary"
           sx={{
             mb: 2,
-            maxHeight: "100px", // Limit the height of the description
-            overflowY: "auto", // Enable scrolling if content exceeds height
+            maxHeight: "100px", 
+            overflowY: "auto", 
           }}
         >
           {Descrizione}
         </Typography>
 
-        {/* Prezzo */}
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <Typography
             variant="h6"
@@ -272,7 +266,6 @@ const Prodotto = ({ prodotto, onLike }) => {
         </Box>
       </CardContent>
 
-      {/* Azioni */}
       <Stack
         direction="row"
         spacing={2}
@@ -282,7 +275,6 @@ const Prodotto = ({ prodotto, onLike }) => {
           justifyContent: "space-between",
         }}
       >
-        {/* Carrello Button */}
         <Button
           variant="contained"
           color="primary"
@@ -299,17 +291,16 @@ const Prodotto = ({ prodotto, onLike }) => {
           <Cart sx={{ scale: .8, mr: .5 }} /> Aggiungi
         </Button>
 
-        {/* Commenti Button */}
         <Button
           variant="outlined"
           color="primary"
           sx={{
             flex: 0.75,
-            height: 40, // Fixed height
-            minWidth: 120, // Minimum width
-            whiteSpace: "nowrap", // Prevent text wrapping
-            fontSize: 14, // Consistent font size
-            padding: "8px 16px", // Consistent padding
+            height: 40, 
+            minWidth: 120, 
+            whiteSpace: "nowrap",
+            fontSize: 14, 
+            padding: "8px 16px", 
           }}
           onClick={handleOpenModal}
         >
@@ -317,7 +308,6 @@ const Prodotto = ({ prodotto, onLike }) => {
         </Button>
       </Stack>
 
-      {/* Popup per i commenti */}
       <Modal open={openModal} onClose={handleCloseModal}>
         <Paper
           sx={{
@@ -384,7 +374,6 @@ const Prodotto = ({ prodotto, onLike }) => {
           </Box>
         </Paper>
       </Modal>
-      {/* Modal per modifica prodotto */}
       <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
         <Paper
           sx={{

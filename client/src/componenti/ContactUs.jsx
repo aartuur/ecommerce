@@ -77,23 +77,19 @@ function ContactUs({name}) {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Form Submitted:", formData);
-        // Aggiungi qui la logica per inviare i dati al server
     };
 
     return (
         <ContactSection name={name}>
             <Grid container spacing={2}>
-                {/* Colonna Sinistra: Informazioni di Contatto */}
 
 
-                {/* Colonna Destra: Form di Contatto */}
                 <Grid item xs={12} md={6}>
                     <Typography variant="h5" gutterBottom>
                         Segnala un problema
                     </Typography>
                     <form onSubmit={handleSubmit}>
                         <ContactForm>
-                            {/* Campo Nome */}
                             <StyledTextField
                                 label="Name"
                                 name="name"
@@ -103,7 +99,6 @@ function ContactUs({name}) {
                                 required
                             />
 
-                            {/* Campo Email */}
                             <StyledTextField
                                 label="Email"
                                 name="email"
@@ -114,7 +109,6 @@ function ContactUs({name}) {
                                 required
                             />
 
-                            {/* Campo Messaggio */}
                             <StyledTextField
                                 label="Your Message"
                                 name="message"
@@ -126,7 +120,6 @@ function ContactUs({name}) {
                                 required
                             />
 
-                            {/* Bottone di Invio */}
                             <StyledButton type="submit" variant="contained" fullWidth>
                                 Invia
                             </StyledButton>
