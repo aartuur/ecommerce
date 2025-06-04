@@ -6,8 +6,9 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
-    <access origin="https://localhost:14577" />
-    <allow-navigation href="https://localhost:14577" />
+    <access origin="*" />
+    <allow-navigation href="*" />
+
 
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
