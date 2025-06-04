@@ -21,12 +21,6 @@ userRouter.get("/preferiti", async (req, res) => {
       relations: ["prodotto"],
     });
 
-    if (!preferitiDaUtente?.length) {
-      return res.status(404).json({
-        msg: "Nessun prodotto preferito trovato per questo utente.",
-      });
-    }
-
     const userRepo = getRepository(User);
     const prodottiConUsername = await Promise.all(
       preferitiDaUtente.map(async ({ prodotto }) => {

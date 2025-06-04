@@ -32,16 +32,15 @@ const Profile = () => {
   const sessionUserData = sessionCookie ? JSON.parse(atob(sessionCookie)) : null;
   const [prodottiPubblicati, setProdottiPubblicati] = useState([]);
   const [prodottiPreferiti, setProdottiPreferiti] = useState([]);
-  const [userData, setUserData] = useState(null); // Dati dell'utente specifico
+  const [userData, setUserData] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isFollowing, setIsFollowing] = useState(false); // Stato per seguire/smettere di seguire
+  const [isFollowing, setIsFollowing] = useState(false); 
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [openFollowersPopup, setOpenFollowersPopup] = useState(false);
   const [openFollowingPopup, setOpenFollowingPopup] = useState(false);
 
-  // Funzione per ottenere l'ID utente dall'URL
   function getIdUtenteFromUrl() {
     try {
       const currentUrl = window.location.href;
@@ -49,7 +48,7 @@ const Profile = () => {
       const pathSegments = url.pathname.split("/").filter(segment => segment);
 
       if (pathSegments[0] === "profile" && pathSegments[1]) {
-        return pathSegments[1]; // Restituisce l'ID utente (numerico o UUID)
+        return pathSegments[1];
       }
 
       return null;
@@ -73,13 +72,11 @@ const Profile = () => {
           return;
         }
 
-        // Recupera i dati dell'utente specifico
         const userResponse = await axios.get(`http://localhost:14577/user/getUserById?userId=${userId}`);
         if (isMounted) {
           setUserData(userResponse.data);
         }
 
-        // Verifica se l'utente loggato segue già l'utente visualizzato
         const followStatusResponse = await axios.get(`http://localhost:14577/user/isFollowing`, {
           params: { followerId: sessionUserData.id, followedId: userId },
         });
@@ -87,7 +84,6 @@ const Profile = () => {
           setIsFollowing(followStatusResponse.data.isFollowing);
         }
 
-        // Recupera i followers
         const followersResponse = await axios.get(`http://localhost:14577/user/followers`, {
           params: { userId },
         });
@@ -95,7 +91,6 @@ const Profile = () => {
           setFollowers(followersResponse.data.followers);
         }
 
-        // Recupera gli utenti seguiti
         const followingResponse = await axios.get(`http://localhost:14577/user/following`, {
           params: { userId },
         });
@@ -103,17 +98,14 @@ const Profile = () => {
           setFollowing(followingResponse.data.following);
         }
 
-        // Recupera i prodotti pubblicati dall'utente
         const responseProdottiPubblicati = await axios.get(`http://localhost:14577/product/get-prods-by-user`, {
           params: { userId },
         });
 
-        // Recupera i prodotti preferiti dall'utente
         const responseProdottiPreferiti = await axios.get(`http://localhost:14577/user/preferiti`, {
           params: { userId },
         });
 
-        // Aggiorna lo stato solo se il componente è ancora montato
         if (isMounted) {
           setProdottiPubblicati(responseProdottiPubblicati.data.prodotti);
           setProdottiPreferiti(responseProdottiPreferiti.data.prodotti);
@@ -130,15 +122,14 @@ const Profile = () => {
 
     fetchUserData();
 
-    // Cleanup function per evitare aggiornamenti dello stato dopo che il componente è smontato
     return () => {
       isMounted = false;
     };
-  }, [userId]); // Dipendenza solo su userId
+  }, [userId]); 
 
   if (!sessionUserData) {
     navigate("/login");
-    return null; // Evita il rendering se l'utente non è autenticato
+    return null;
   }
 
   const myId = getCookieData(Cookies.get("SSDT")).id
