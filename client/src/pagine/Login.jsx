@@ -77,7 +77,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:14577/auth/login", formData);
+      const response = await axios.post(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/auth/login`, formData);
 
       if (response.status === 200) {
         const cookieData = base64.encode(
@@ -97,9 +97,11 @@ const Login = () => {
     }
   };
 
+  console.log()
+
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await axios.post("http://localhost:14577/oauth/callback", {
+      const res = await axios.post(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/oauth/callback`, {
         tokenId: credentialResponse.credential, 
       });
 

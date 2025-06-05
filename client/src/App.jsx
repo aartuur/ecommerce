@@ -35,7 +35,7 @@ function App() {
       try {
         const limite = 6;
         const response = await axios.get(
-          `http://localhost:14577/product/get-prods/${limite}`
+          `http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/product/get-prods/${limite}`
         );
         setProdotti(response.data.prodotti);
       } catch (error) {
@@ -57,7 +57,7 @@ function App() {
         return;
       }
 
-      const response = await axios.post("http://localhost:14577/product/add-like", {
+      const response = await axios.post(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/product/add-like`, {
         prodottoId,
         username,
       });
@@ -73,6 +73,7 @@ function App() {
       console.error("Errore durante l'aggiunta del like:", error);
     }
   };
+
 
   return (
     <>

@@ -11,7 +11,7 @@ const Prodotti = () => {
   useEffect(() => {
     const getprods = async () => {
       try {
-        const res = await axios.get("http://localhost:14577/product/get-prods");
+        const res = await axios.get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/product/get-prods`);
         setProds(res.data);
       } catch (err) {
         console.error(err);

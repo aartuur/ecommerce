@@ -13,7 +13,7 @@ const ChatList = () => {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const res = await fetch(`http://localhost:14577/chat/list/${userId}`, {
+        const res = await fetch(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/chat/list/${userId}`, {
           credentials: "include",
         });
         const data = await res.json();

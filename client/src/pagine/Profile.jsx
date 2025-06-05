@@ -32,10 +32,10 @@ const Profile = () => {
   const sessionUserData = sessionCookie ? JSON.parse(atob(sessionCookie)) : null;
   const [prodottiPubblicati, setProdottiPubblicati] = useState([]);
   const [prodottiPreferiti, setProdottiPreferiti] = useState([]);
-  const [userData, setUserData] = useState(null); 
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isFollowing, setIsFollowing] = useState(false); 
+  const [isFollowing, setIsFollowing] = useState(false);
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [openFollowersPopup, setOpenFollowersPopup] = useState(false);
@@ -58,11 +58,11 @@ const Profile = () => {
     }
   }
 
-  const userId = getIdUtenteFromUrl(); 
+  const userId = getIdUtenteFromUrl();
 
   useEffect(() => {
-    window.scrollTo(0,0)
-    let isMounted = true; 
+    window.scrollTo(0, 0)
+    let isMounted = true;
 
     const fetchUserData = async () => {
       try {
@@ -72,37 +72,37 @@ const Profile = () => {
           return;
         }
 
-        const userResponse = await axios.get(`http://localhost:14577/user/getUserById?userId=${userId}`);
+        const userResponse = await axios.get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/user/getUserById?userId=${userId}`);
         if (isMounted) {
           setUserData(userResponse.data);
         }
 
-        const followStatusResponse = await axios.get(`http://localhost:14577/user/isFollowing`, {
+        const followStatusResponse = await axios.get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/user/isFollowing`, {
           params: { followerId: sessionUserData.id, followedId: userId },
         });
         if (isMounted) {
           setIsFollowing(followStatusResponse.data.isFollowing);
         }
 
-        const followersResponse = await axios.get(`http://localhost:14577/user/followers`, {
+        const followersResponse = await axios.get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/user/followers`, {
           params: { userId },
         });
         if (isMounted) {
           setFollowers(followersResponse.data.followers);
         }
 
-        const followingResponse = await axios.get(`http://localhost:14577/user/following`, {
+        const followingResponse = await axios.get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/user/following`, {
           params: { userId },
         });
         if (isMounted) {
           setFollowing(followingResponse.data.following);
         }
 
-        const responseProdottiPubblicati = await axios.get(`http://localhost:14577/product/get-prods-by-user`, {
+        const responseProdottiPubblicati = await axios.get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/product/get-prods-by-user`, {
           params: { userId },
         });
 
-        const responseProdottiPreferiti = await axios.get(`http://localhost:14577/user/preferiti`, {
+        const responseProdottiPreferiti = await axios.get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/user/preferiti`, {
           params: { userId },
         });
 
@@ -125,7 +125,7 @@ const Profile = () => {
     return () => {
       isMounted = false;
     };
-  }, [userId]); 
+  }, [userId]);
 
   if (!sessionUserData) {
     navigate("/login");
@@ -154,12 +154,12 @@ const Profile = () => {
   const handleFollow = async () => {
     try {
       if (isFollowing) {
-        await axios.delete("http://localhost:14577/user/unfollow", {
+        await axios.delete(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/user/unfollow`, {
           params: { followerId: sessionUserData.id, followedId: userId },
         });
         setIsFollowing(false);
       } else {
-        await axios.post("http://localhost:14577/user/follow", {
+        await axios.post(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/user/follow`, {
           followerId: sessionUserData.id,
           followedId: userId,
         });
@@ -175,19 +175,45 @@ const Profile = () => {
 
   return (
     <Box sx={{ py: 8, backgroundColor: "rgba(255,255,255,.4)", minHeight: "100vh", color: "rgba(255,255,255,.8)" }}>
-      <Container maxWidth="lg">
-        <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
-          <ProfilePic googleAvatar={googleAvatar} normalAvatar={normalAvatar} size={175} fontSize={50} />
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 4 } }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: "center",
+            mb: 4,
+            gap: { xs: 3, md: 6 },
+          }}
+        >
+          <ProfilePic
+            googleAvatar={googleAvatar}
+            normalAvatar={normalAvatar}
+            size={undefined}
+            fontSize={undefined}
+            sx={{
+              width: { xs: 300, md: 400 },
+              height: { xs: 300, md: 400 },
+              fontSize: { xs: 30, md: 50 },
+            }}
+          />
 
-          <Box sx={{ flexGrow: 1 }} ml={4}>
-            <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
+          <Box sx={{ flexGrow: 1, textAlign: { xs: "center", md: "left" } }}>
+            <Typography variant="h4" sx={{ fontWeight: 600, mb: 1, fontSize: { xs: "1.8rem", md: "2.5rem" } }}>
               {userData?.username || "Guest"}
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
               {userData?.email || "Nessuna email disponibile"}
             </Typography>
 
-            <Box sx={{ display: "flex", gap: 4, mb: 2, color: "black" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: { xs: "center", md: "flex-start" },
+                gap: { xs: 2, sm: 3, md: 4 },
+                mb: 2,
+                color: "black",
+              }}
+            >
               <Box sx={{ cursor: "pointer" }} onClick={() => setOpenFollowersPopup(true)}>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   {followers.length}
@@ -207,30 +233,31 @@ const Profile = () => {
             </Box>
 
             {!isMyself && (
-              <Button
-                variant="contained"
-                color={isFollowing ? "secondary" : "primary"}
-                onClick={handleFollow}
-                sx={{ mt: 2 }}
-              >
-                {isFollowing ? "Segui già" : "Segui"}
-              </Button>
-            )}
-            {!isMyself && (
-              <Button
-                variant="outlined"
-                color="primary"
-                startIcon={<ChatIcon />}
-                onClick={() => {
-                  const roomId = base64.encode([sessionUserData?.id, userId].sort().join("_"));
-                  navigate(`/chat/${roomId}`);
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  alignItems: { xs: "center", sm: "flex-start" },
+                  gap: 2,
+                  mt: 2,
                 }}
-                sx={{ mt: 2, ml: 2 }}
               >
-                Messaggio
-              </Button>
+                <Button variant="contained" color={isFollowing ? "secondary" : "primary"} onClick={handleFollow}>
+                  {isFollowing ? "Segui già" : "Segui"}
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<ChatIcon />}
+                  onClick={() => {
+                    const roomId = base64.encode([sessionUserData?.id, userId].sort().join("_"));
+                    navigate(`/chat/${roomId}`);
+                  }}
+                >
+                  Messaggio
+                </Button>
+              </Box>
             )}
-            
           </Box>
         </Box>
 
@@ -271,151 +298,9 @@ const Profile = () => {
             Nessun prodotto preferito.
           </Typography>
         )}
-
-        <Dialog
-          open={openFollowersPopup}
-          onClose={() => setOpenFollowersPopup(false)}
-          PaperProps={{
-            sx: {
-              borderRadius: 2,
-              maxWidth: 400, 
-              maxHeight: 600, 
-              overflow: "hidden",
-              "& .MuiDialogContent-root": {
-                padding: 0, 
-              },
-            },
-          }}
-        >
-          <DialogTitle>Followers</DialogTitle>
-          <DialogContent>
-            <InfiniteScroll
-              dataLength={followers.length}
-              next={() => { }}
-              hasMore={true}
-              loader={<LinearProgress />}
-              scrollableTarget="scrollableDiv"
-            >
-              <List disablePadding>
-                {followers.map((follower) => (
-                  <ListItem
-                    key={follower.id}
-                    sx={{ display: "flex", alignItems: "center", justifyContent: "start", py: 1.5, px: 2, cursor: "pointer" }}
-                    onClick={() => navigate(`/profile/${follower.id}`)}
-                  >
-                    <Button
-                      component="a"
-                      href={`/profile/${follower.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{ textDecoration: "none", mr: 2 }}
-                    >
-                      <Avatar
-                        sx={{
-                          width: 40,
-                          height: 40,
-                          bgcolor: "primary.main",
-                          fontSize: "1.5rem",
-                        }}
-                      >
-                        {follower.username?.slice(0, 2).toUpperCase()}
-                      </Avatar>
-                    </Button>
-
-                    <ListItemText
-                      primary={
-                        <Button
-                          component="a"
-                          href={`/profile/${follower.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          sx={{ textDecoration: "none" }}
-                        >
-                          {follower.username}
-                        </Button>
-                      }
-                      secondary={follower.email}
-                      sx={{ lineHeight: 1.5 }}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </InfiniteScroll>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog
-          open={openFollowingPopup}
-          onClose={() => setOpenFollowingPopup(false)}
-          PaperProps={{
-            sx: {
-              borderRadius: 2,
-              maxWidth: 400, 
-              maxHeight: 600, 
-              overflow: "hidden",
-              "& .MuiDialogContent-root": {
-                padding: 0, 
-              },
-            },
-          }}
-        >
-          <DialogTitle>Following</DialogTitle>
-          <DialogContent>
-            <InfiniteScroll
-              dataLength={following.length}
-              next={() => { }}
-              hasMore={true}
-              loader={<LinearProgress />}
-              scrollableTarget="scrollableDiv"
-            >
-              <List disablePadding>
-                {following.map((followed) => (
-                  <ListItem
-                    key={followed.id}
-                    sx={{ display: "flex", alignItems: "center", justifyContent: "start", py: 1.5, px: 2, cursor: "pointer" }}
-                    onClick={() => navigate(`/profile/${followed.id}`)}
-                  >
-                    <Button
-                      component="a"
-                      href={`/profile/${followed.id}`}
-                      rel="noopener noreferrer"
-                      sx={{ textDecoration: "none", mr: 2 }}
-                    >
-                      <Avatar
-                        sx={{
-                          width: 40,
-                          height: 40,
-                          bgcolor: "primary.main",
-                          fontSize: "1.5rem",
-                        }}
-                      >
-                        {followed.username?.slice(0, 2).toUpperCase()}
-                      </Avatar>
-                    </Button>
-
-                    <ListItemText
-                      primary={
-                        <Button
-                          component="a"
-                          href={`/profile/${followed.id}`}
-                          rel="noopener noreferrer"
-                          sx={{ textDecoration: "none" }}
-                        >
-                          {followed.username}
-                        </Button>
-                      }
-                      secondary={followed.email}
-                      sx={{ lineHeight: 1.5 }}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </InfiniteScroll>
-          </DialogContent>
-        </Dialog>
       </Container>
     </Box>
   );
-};
+}
 
 export default Profile;

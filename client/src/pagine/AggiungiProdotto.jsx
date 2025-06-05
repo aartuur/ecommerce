@@ -62,7 +62,7 @@ const AggiungiProdotto = () => {
     profilePic && formDataToSend.append("profilePic", profilePic);
 
     try {
-      const response = await fetch("http://localhost:14577/product/add-prod", {
+      const response = await fetch(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/product/add-prod`, {
         method: "POST",
         body: formDataToSend,
       });

@@ -57,7 +57,7 @@ const Prodotto = ({ prodotto, onLike }) => {
   useEffect(() => {
     if (imageId) {
       axios
-        .get(`http://localhost:14577/product/get-image?imageId=${imageId}`, { responseType: "arraybuffer" })
+        .get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/product/get-image?imageId=${imageId}`, { responseType: "arraybuffer" })
         .then((response) => {
           const base64Image = btoa(
             new Uint8Array(response.data).reduce(
@@ -81,7 +81,7 @@ const Prodotto = ({ prodotto, onLike }) => {
     setOpenModal(true);
 
     try {
-      const response = await axios.get(`http://localhost:14577/comment/get-comments?productId=${id}`);
+      const response = await axios.get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/comment/get-comments?productId=${id}`);
       setComments(response.data);
     } catch (error) {
       console.error("Errore durante il recupero dei commenti:", error);
@@ -101,7 +101,7 @@ const Prodotto = ({ prodotto, onLike }) => {
     if (!editingField || editedValue.trim() === "") return;
 
     try {
-      await axios.put(`http://localhost:14577/product/update`, {
+      await axios.put(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/product/update`, {
         productId: id,
         field: editingField,
         value: editedValue,
@@ -124,7 +124,7 @@ const Prodotto = ({ prodotto, onLike }) => {
     if (newComment.trim() === "") return;
 
     axios
-      .post("http://localhost:14577/comment/add", {
+      .post(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/comment/add`, {
         productId: id,
         senderId: sessionCookieData.id,
         text: newComment,
@@ -138,7 +138,7 @@ const Prodotto = ({ prodotto, onLike }) => {
 
   const handleAddToCart = async (productId) => {
     try {
-      await axios.post("http://localhost:14577/cart/add-to-cart", {
+      await axios.post(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/cart/add-to-cart`, {
         productId,
         cartedFrom: sessionCookieData.id, // Logged-in user ID
         quantity: 1, // Default quantity

@@ -43,13 +43,13 @@ const Chat = () => {
     const destinatario = ids.find((id) => id !== mittente.toString());
     setDestinatarioId(destinatario);
 
-    const socket = io("http://localhost:14577", { withCredentials: true });
+    const socket = io(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}`, { withCredentials: true });
     socketRef.current = socket;
     socket.emit("join-room", roomId);
 
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`http://localhost:14577/chat/messages/${roomId}`);
+        const res = await fetch(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/chat/messages/${roomId}`);
         const data = await res.json();
         setMessaggi(data.messaggi || []);
       } catch (err) {

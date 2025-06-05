@@ -39,7 +39,7 @@ const Carrello = () => {
     useEffect(() => {
         const fetchCartProducts = async () => {
             try {
-                const response = await axios.get(`http://localhost:14577/cart/get-products?userId=${userId}`);
+                const response = await axios.get(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/cart/get-products?userId=${userId}`);
 
                 if (!Array.isArray(response.data)) {
                     console.error("Unexpected API response format:", response.data);
@@ -59,7 +59,7 @@ const Carrello = () => {
 
     const handleRemoveFromCart = async (productId) => {
         try {
-            await axios.delete("http://localhost:14577/cart/remove-from-cart", {
+            await axios.delete(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/cart/remove-from-cart`, {
                 data: { productId, userId },
             });
 
