@@ -188,8 +188,8 @@ const Profile = () => {
           <ProfilePic
             googleAvatar={googleAvatar}
             normalAvatar={normalAvatar}
-            size={undefined}
-            fontSize={undefined}
+            size={150}
+            fontSize={50}
             sx={{
               width: { xs: 300, md: 400 },
               height: { xs: 300, md: 400 },
