@@ -6,7 +6,7 @@ import FadeInOnView from "./FadeInOnView";
 
 const Section = () => {
   const [state, setState] = useState(
-    "easter egg per voi fans che vi siete addirittura guardati il codice sorgente, perchè lo state facendo?!ahahah"
+    "easter egg per voi bois che vi siete addirittura guardati il codice sorgente, perchè lo state facendo siete pazzi?!"
   );
 
   return (
