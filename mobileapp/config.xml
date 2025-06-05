@@ -1,16 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.app.ecommerce" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>EcommerceApp</name>
-    <description>Sample Apache Cordova App</description>
-    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
-        Apache Cordova Team
-    </author>
+<widget id="com.tuodominio.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>MyApp</name>
+    <description>App description</description>
+    <author email="you@example.com" href="http://example.com">Your Name</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-navigation href="*" />
-
-
-    <allow-intent href="http://*/*" />
-    <allow-intent href="https://*/*" />
-
+    <allow-intent href="*" />
+    <preference name="android-targetSdkVersion" value="33" />
+    <preference name="android-minSdkVersion" value="22" />
+    <preference name="android-build-tool" value="33.0.2" />
+    <preference name="android-build-arch" value="arm64-v8a,armeabi-v7a" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
 </widget>
