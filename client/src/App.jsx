@@ -73,8 +73,7 @@ function App() {
       console.error("Errore durante l'aggiunta del like:", error);
     }
   };
-
-
+ 
   return (
     <>
       <Box width="100vw" mb={5}>

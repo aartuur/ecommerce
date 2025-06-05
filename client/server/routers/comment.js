@@ -8,7 +8,7 @@ const commentRouter = Router()
 
 commentRouter.post("/add", async (req, res) => {
     const { productId, senderId, text } = req.body;
-
+ 
     // Validazione dei campi
     if (!productId || !senderId || !text) {
         return res.status(400).json({ msg: "Tutti i campi sono obbligatori." });

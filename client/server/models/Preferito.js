@@ -8,7 +8,7 @@ const Preferito = new EntitySchema({
       type: "uuid",
       primary: true,
       generated: "uuid",
-    },
+    }, 
     userId: {
       type: "uuid",
       nullable: false,

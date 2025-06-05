@@ -16,7 +16,7 @@ import ChatList from './componenti/ChatList.jsx'
 createRoot(document.getElementById('root')).render(
   <>
     <StrictMode>
-      
+       
       <BrowserRouter>
       <Navbar />
         <Routes>
