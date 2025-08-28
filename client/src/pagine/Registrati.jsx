@@ -71,7 +71,7 @@ const Registrati = () => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await axios.post(`http://${process.env.REACT_APP_SERVER_HOTSPOT_IP}/oauth/callback`, {
+      const res = await axios.post(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/oauth/callback`, {
         tokenId: credentialResponse.credential,
       });
 
@@ -99,7 +99,7 @@ const Registrati = () => {
     setLoading(true); 
 
     try {
-      const response = await axios.post(`http://${process.env.REACT_APP_SERVER_HOTSPOT_IP}/auth/registrati`, formData);
+      const response = await axios.post(`http://${import.meta.env.VITE_SERVER_HOTSPOT_IP}/auth/registrati`, formData);
 
       if (response.status === 201) {
         const cookieData = base64.encode(
